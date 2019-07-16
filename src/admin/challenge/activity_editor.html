@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../common.css">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+    <script src="https://unpkg.com/qiniu-js@2.5.4/dist/qiniu.min.js"></script>
+</head>
+<body>
+
+<form class="layui-form" action="" style="margin-top: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">挑战名称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="activity_name" name="activity_name" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">挑战封面</label>
+        <div class="layui-card-body">
+            <div class="layui-upload">
+                <img class="layui-upload-img"  id="activity_img" style="width: 188px;height: 188px">
+                <input type="file" name="file1" id='file1' style="display:none" onChange='changeFile("file1","#activity_img")'/>
+                <button type="button" class="layui-btn" id="upload_img" name="upload_img1" data-type="activity_img">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">挑战视频</label>
+        <div class="layui-card-body">
+            <div class="layui-upload">
+
+                <video id="video" controls preload="auto" width="400px" height="300px">
+                    <source src="" type="video/mp4">
+                </video>
+                <input type="file" name="file" id='file' style="display:none" onChange='changeFile("file","#video")'/>
+                <button type="button" class="layui-btn" id="system_img" name="upload_img" data-type="video">
+                    <i class="layui-icon">&#xe67c;</i>上传视频
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+            <div class="layui-inline">
+             <label class="layui-form-label">开始日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="start_time" id="start_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+             </div>
+             </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">结束日期</label>
+             <div class="layui-input-inline">
+             <input type="text" name="end_time" id="end_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+             </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">销售分成开始日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="sales_start_time" id="sales_start_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">销售分成结束日期</label>
+            <div class="layui-input-inline">
+                <input type="text" name="sales_end_time" id="sales_end_time" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">产品名称</label>
+        <div class="layui-input-inline">
+            <select name="product_id" id="product_id"  lay-verify="required" lay-filter="role">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">销售比例奖励方式</label>-->
+        <!--<div class="layui-input-inline">-->
+            <!--<input type="checkbox" id="percent_reward" name="percent_reward" lay-filter="percent_reward" lay-skin="switch" lay-text="ON|OFF" checked value="1">-->
+
+        <!--</div>-->
+        <!--<label class="layui-form-label">固定值奖励方式</label>-->
+        <!--<div class="layui-input-inline">-->
+            <!--<input type="checkbox" id="fixed_reward" name="fixed_reward" lay-filter="fixed_reward" lay-skin="switch" lay-text="ON|OFF" checked value="1">-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" id="state" name="state" lay-filter="state" lay-skin="switch" lay-text="ON|OFF"  checked value="1">
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">挑战名额</label>
+        <div class="layui-input-inline">
+            <input type="number" id="activity_people" name="activity_people"  required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+
+    </div>
+    <div class="layui-form-item" style="display:flex;">
+        <label class="layui-form-label">挑战规则详情</label>
+        <div style="background: #ffffff;width: 800px">
+            <div id="demo">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-card" style="margin: 10px">
+        <div class="layui-card-body">
+            销售奖励
+
+            <table id="challengeSalesRewardBeans" lay-filter="challengeSalesRewardBeans"></table>
+        </div>
+    </div>
+    <div class="layui-card" style="margin: 10px">
+        <div class="layui-card-body">
+            固定奖励
+
+            <table id="challengeFixedRewardBeans" lay-filter="challengeFixedRewardBeans"></table>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-top: 20px">
+        <div class="layui-input-block" id="submit_button">
+            <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+
+
+<script>
+    var product_id = "";
+    var challengeSalesRewardBeans=[];
+    var challengeFixedRewardBeans=[];
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form','laydate','layedit','table'], function(){
+
+
+
+        var $ = layui.$
+            ,laydate= layui.laydate,form = layui.form,layedit = layui.layedit,table=layui.table;;
+        laydate.render({
+            elem: '#end_time'
+            ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#sales_start_time'
+            ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#sales_end_time'
+            ,type: 'datetime'
+        });
+        laydate.render({
+            elem: '#start_time'
+            ,type: 'datetime'
+        });
+
+        var desc_index=layeditRender(layedit,'demo',{height:300});
+        var activity_id=getParameter(0,"activity_id")
+
+        if(activity_id!="-1"){
+            post(home_url+"/challengeController/v1.0/getChallengeActivity",{activity_id:activity_id},function (data) {
+                product_id=data.product_id;
+                $("#activity_name").val(data.activity_name)
+                $("#video").attr('src',data.video)
+                $("#activity_img").attr('src',data.activity_img)
+                $("#start_time").val(data.start_time)
+                $("#end_time").val(data.end_time)
+                $("#sales_start_time").val(data.sales_start_time)
+                $("#sales_end_time").val(data.sales_end_time)
+                $("#activity_people").val(data.activity_people)
+
+                if(data.sales_state==='1'){
+                    $("#submit_button").hide();
+                }
+                $("#state").attr("checked", data.state==="1"?true:false);
+                layedit.setContent(desc_index,data.challenge_rule,false);
+                $("#product_id").val(data.product_id);
+                challengeSalesRewardBeans=data.challengeSalesRewardBeans;
+                console.log(challengeSalesRewardBeans);
+                challengeFixedRewardBeans=data.challengeFixedRewardBeans;
+                renderSales(table);
+                renderFixeds(table);
+                form.render();
+            })
+        }else{
+
+        }
+        post(home_url+"/goodsController/v1.0/getMallProductsNoPage",{},function (data) {
+            $.each(data, function (index, item) {
+                $('#product_id').append(new Option(item.product_name, item.product_id));// 下拉菜单里添加元素
+            });
+            if(!isNull(product_id)){
+                $('#product_id').val(product_id);//设置默认选中项
+            }
+            form.render("select");
+        })
+        $('.layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        var $ = layui.$, active = {
+
+            video: function(){
+                var pic = document.getElementById("file");
+                pic.click();
+            },
+            activity_img: function(){
+            var pic1 = document.getElementById("file1");
+            pic1.click();
+            }
+        };
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var params=data.field;
+            if("1"!=params["percent_reward"]){
+                params["percent_reward"]="0";
+            }
+            if("1"!=params["state"]){
+                params["state"]="0";
+            }
+            if("1"!=params["fixed_reward"]){
+                params["fixed_reward"]="0";
+            }
+            params["video"]=$("#video")[0].src;
+            params["activity_img"]=$("#activity_img")[0].src;
+            params["challenge_rule"]=layedit.getContent(desc_index);
+            if(activity_id=="-1"){
+
+                post(home_url+"/challengeController/v1.0/insertChallengeActivity",params,function () {
+                    window.parent.location.reload();//刷新父页面
+                    var index = parent.layer.getFrameIndex(window.name)//当前层的index
+                    parent.layer.close(index)//关闭当前层
+                })
+            }else{
+                params["activity_id"]=activity_id;
+                post(home_url+"/challengeController/v1.0/updateChallengeActivity",params,function () {
+                    window.parent.location.reload();//刷新父页面
+                    var index = parent.layer.getFrameIndex(window.name)//当前层的index
+                    parent.layer.close(index)//关闭当前层
+                })
+            }
+
+        });
+    });
+    function renderSales(table) {
+        tableRender2(table,'#challengeSalesRewardBeans',[[
+            {field:'rank_start',title: '排名左区间'}
+            ,{field:'rank_end',title: '排名右区间'}
+            ,{field:'rank_value',title: '百分比（%）'}
+        ]],challengeSalesRewardBeans)
+    }
+    function renderFixeds(table) {
+        tableRender2(table,'#challengeFixedRewardBeans',[[
+            {field:'rank_start',title: '排名左区间'}
+            ,{field:'rank_end',title: '排名右区间'}
+            ,{field:'rank_value',title: '金额(元）'}
+        ]],challengeFixedRewardBeans)
+    }
+</script>
+</body>
+</html>

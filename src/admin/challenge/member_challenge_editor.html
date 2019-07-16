@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../common.css">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+    <script src="https://unpkg.com/qiniu-js@2.5.4/dist/qiniu.min.js"></script>
+</head>
+<body>
+
+<form class="layui-form" action="" style="margin-top: 10px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-inline">
+            <input type="text"style="width:400px;"  id="challenge_desc" name="challenge_desc" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+
+    </div>
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">挑战封面</label>-->
+        <!--<div class="layui-card-body">-->
+            <!--<div class="layui-upload">-->
+                <!--<img class="layui-upload-img"  id="title" style="width: 188px;height: 188px">-->
+                <!--<input type="file" name="file1" id='file1' style="display:none" onChange='changeFile("file1","#title")'/>-->
+                <!--&lt;!&ndash;<button type="button" class="layui-btn" id="upload_img" name="upload_img1" data-type="title">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<i class="layui-icon">&#xe67c;</i>上传图片&ndash;&gt;-->
+                <!--&lt;!&ndash;</button>&ndash;&gt;-->
+            <!--</div>-->
+        <!--</div>-->
+
+    <!--</div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">挑战视频</label>
+        <div class="layui-card-body">
+            <div class="layui-upload">
+
+                <video id="video" controls preload="auto" width="400px" height="300px">
+                    <source src="" type="video/mp4">
+                </video>
+                <!--<input type="file" name="file" id='file' style="display:none" onChange='changeFile("file","#video")'/>-->
+                <!--<button type="button" class="layui-btn" id="system_img" name="upload_img" data-type="video">-->
+                    <!--<i class="layui-icon">&#xe67c;</i>上传视频-->
+                <!--</button>-->
+            </div>
+        </div>
+
+    </div>
+    <!--<div class="layui-form-item">-->
+        <!--<label class="layui-form-label">用户</label>-->
+        <!--<div class="layui-input-inline">-->
+            <!--<input type="text" id="member_id" name="member_id" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">-->
+        <!--</div>-->
+
+    <!--</div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">视频分类</label>
+        <div class="layui-input-inline">
+            <input type="text" id="class_name" name="class_name" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+        <label class="layui-form-label">产品名称</label>
+        <div class="layui-input-inline">
+            <input type="text" style="width:400px;" id="product_name" name="product_name"  readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">收藏数</label>
+        <div class="layui-input-inline">
+            <input type="text" id="collection_num" name="collection_num" readonly="readonly"  required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+        <label class="layui-form-label">分享数</label>
+        <div class="layui-input-inline">
+            <input type="text" id="share_num" name="share_num" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">评论数</label>
+        <div class="layui-input-inline">
+            <input type="text" id="comment_num" name="comment_num" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+        <label class="layui-form-label">点赞数</label>
+        <div class="layui-input-inline">
+            <input type="text" id="good_num" name="good_num" readonly="readonly" required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">官方权重</label>
+        <div class="layui-input-inline">
+            <input type="number" id="offical_sort" name="offical_sort"  required  lay-verify="required" autocomplete="off"  class="layui-input">
+        </div>
+        <label class="layui-form-label">上架状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" id="state" name="state" lay-filter="state" lay-skin="switch" lay-text="ON|OFF"  checked value="1">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="display:flex;">
+        <label class="layui-form-label">挑战规则详情</label>
+        <div style="background: #ffffff;width: 800px">
+            <div id="demo">
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item" style="margin-top: 20px">
+        <div class="layui-input-block">
+            <button id="submit_button" type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <!--<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+        </div>
+    </div>
+</form>
+
+
+
+<script>
+    var product_id = "";
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form','laydate','layedit'], function(){
+
+
+
+        var $ = layui.$
+            ,laydate= layui.laydate,form = layui.form,layedit = layui.layedit;;
+        laydate.render({
+            elem: '#end_time'
+        });
+        laydate.render({
+            elem: '#start_time'
+        });
+
+        var desc_index=layeditRender(layedit,'demo',{height:300});
+        var challenge_id=getParameter(0,"challenge_id")
+
+        if(challenge_id!="-1"){
+            post(home_url+"/challengeController/v1.0/getMemberChallenge",{challenge_id:challenge_id},function (data) {
+                $("#challenge_desc").val(data.challenge_desc)
+                $("#video").attr('src',data.video)
+                // $("#title").attr('src',data.title)
+                $("#product_name").val(data.product_name)
+                $("#class_name").val(data.class_name)
+                $("#member_id").val(data.member_id)
+                $("#good_num").val(data.good_num)
+                $("#collection_num").val(data.collection_num)
+                $("#comment_num").val(data.comment_num)
+                $("#share_num").val(data.share_num)
+                $("#good_num").val(data.good_num)
+
+                $("#offical_sort").val(data.offical_sort)
+                $("#state").attr("checked", data.state==="1"?true:false);
+                layedit.setContent(desc_index,data.challenge_rule,false);
+                form.render();
+            })
+        }else{
+
+        }
+        $('.layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        var $ = layui.$, active = {
+
+            video: function(){
+                var pic = document.getElementById("file");
+                pic.click();
+            }
+        };
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var params=data.field;
+            params["video"]=$("#video")[0].src;
+            // params["video"]=$("#video")[0].src;
+            if("1"!=params["state"]){
+                params["state"]="0";
+            }
+            if(challenge_id=="-1"){
+
+                post(home_url+"/challengeController/v1.0/insertMemberChallenge",params,function () {
+                    window.parent.location.reload();//刷新父页面
+                    var index = parent.layer.getFrameIndex(window.name)//当前层的index
+                    parent.layer.close(index)//关闭当前层
+                })
+            }else{
+                params["challenge_id"]=challenge_id;
+                console.log(params);
+                post(home_url+"/challengeController/v1.0/updateMemberChallenge",params,function () {
+                    window.parent.location.reload();//刷新父页面
+                    var index = parent.layer.getFrameIndex(window.name)//当前层的index
+                    parent.layer.close(index)//关闭当前层
+                })
+            }
+
+        });
+    });
+</script>
+</body>
+</html>

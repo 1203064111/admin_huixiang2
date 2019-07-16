@@ -1,0 +1,131 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+
+    <style type="text/css">
+        .layui-table-cell {
+            height: auto;
+            line-height: 28px;
+            padding: 0 15px;
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="goods_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn">查询</i>
+                    </button>
+
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-export">
+                        <i class="layui-icon layui-icon-export layuiadmin-button-btn">导出</i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+            </div>
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table','laydate'], function(){
+        var table = layui.table
+                ,form = layui.form,laydate=layui.laydate;
+
+        form.on('submit(LAY-app-contlist-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-app-content-list', {
+                where: field
+            });
+        });
+
+        form.on('submit(LAY-app-contlist-export)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-app-content-list', {
+                where: field
+            });
+        });
+
+        form.on('submit(LAY-app-contlist-export)', function(data){
+            var field = data.field;
+            //执行重载
+            post(home_url+'/goodsController/v1.0/exportGoodsStatistics',field,function (data) {
+                window.open(data);
+            })
+        });
+
+        tableRender(table,'#LAY-app-content-list',home_url+'/goodsController/v1.0/getGoodsStatistics',{},
+                [[
+                    {field:'goods_name',title: '商品名称'}
+                    ,{field:'goods_type',title: '商品类型'}
+                    ,{field:'goods_num',title: '销售量',sort: true}
+                    ,{field:'sales_price',title: '总销售额',sort: true}
+                    ,{field:'toatl_price',title: '总成本价',sort: true}
+                    ,{field:'logistics_price',title: '总运费',sort: true}
+                    ,{field:'taxation_price',title: '总税费',sort: true}
+                ]],function () {
+
+                })
+
+
+        table.on('sort(LAY-app-content-list)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            console.log(obj.field); //当前排序的字段名
+            console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+            console.log(this); //当前排序的 th 对象
+
+            //尽管我们的 table 自带排序功能，但并没有请求服务端。
+            //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+            table.reload('LAY-app-content-list', {
+                initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+                ,where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                     sort: obj.field //排序方式   在接口作为参数字段  field order
+                    ,sort_type:obj.type
+                }
+            });
+        });
+
+
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/html" id="barDemo">
+
+
+    {{#  if(d.withdraw_state == 1){ }}
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="accept"><i class="layui-icon layui-icon-edit"></i>接受</a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refuse"><i class="layui-icon layui-icon-edit"></i>拒绝</a>
+    {{#  } }}
+    {{#  if(d.withdraw_state == 2){ }}
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="end"><i class="layui-icon layui-icon-edit"></i>打款</a>
+    {{#  } }}
+</script>
+
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+                ,form = layui.form;
+
+        var withdraw_state=getParameter(0,"withdraw_state");
+        tableRender(table,'#LAY-app-content-list',home_url+'/memberController/v1.0/getMemberWithdraws',{withdraw_state:withdraw_state},
+                [[
+                    {type:'checkbox'},
+                    {field:'withdraw_id', title: 'ID'}
+                    ,{field:'member_id',  title: '用户id'}
+                    ,{field:'shop_name',  title: '商家名称'}
+                    ,{field:'shop_account',  title: '联系人'}
+                    ,{field:'withdraw_price', title: '提现金额'}
+                    ,{field:'withdraw_state_show', title: '申请状态'}
+                    ,{field:'create_time', title: '申请时间'}
+                    , {field: 'right', title: '操作', width: 200, toolbar: "#barDemo"}
+                ]],function () {
+
+                })
+
+        table.on('tool(LAY-app-content-list)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'accept') {
+                layer.confirm('确定接受？', function(index) {
+                    post(home_url+'/memberController/v1.0/updateMemberWithdraw',
+                            {withdraw_id:data.withdraw_id,member_id:data.member_id,withdraw_state:'2'},function () {
+                                table.reload("LAY-app-content-list");
+                                layer.close(index)
+                            })
+                });
+            }else if (obj.event === 'refuse') {
+                layer.confirm('确定拒绝？', function(index) {
+                    post(home_url+'/memberController/v1.0/updateMemberWithdraw',
+                            {withdraw_id:data.withdraw_id,member_id:data.member_id,withdraw_state:'3'},function () {
+                                table.reload("LAY-app-content-list");
+                                layer.close(index)
+                            })
+                });
+            }else if (obj.event === 'end') {
+                layer.confirm('确定打款？', function(index) {
+                    post(home_url+'/memberController/v1.0/updateMemberWithdraw',
+                            {withdraw_id:data.withdraw_id,member_id:data.member_id,withdraw_state:'4'},function () {
+                        table.reload("LAY-app-content-list");
+                        layer.close(index)
+                    })
+                });
+            }
+
+        });
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>荟享</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+</head>
+<body>
+
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">附件种类</label>
+        <div class="layui-input-inline">
+            <input type="text" id="BIZ_TYPE_CODE" name="BIZ_TYPE_CODE" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">附件序号</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ATTACHED_SEQ_NO" name="ATTACHED_SEQ_NO" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">单据类型</label>
+        <div class="layui-input-inline">
+            <input type="text" id="CERT_TYPE_CODE" name="CERT_TYPE_CODE" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件名称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="FILE_NAME" name="FILE_NAME" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">文件类型文件后缀 </label>
+        <div class="layui-input-inline">
+            <input type="text" id="FILE_TYPE" name="FILE_TYPE" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">存储日期 </label>
+        <div class="layui-input-inline">
+            <input type="text" id="STORE_DATE" name="STORE_DATE" required  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">附件</label>
+        <div class="layui-upload">
+            <img class="layui-upload-img" id="goods_img" style="width: 40px;height: 40px"/>
+            <button type="button" class="layui-btn" id="upload_img" name="upload_img">
+                <i class="layui-icon">&#xe67c;</i>上传附件
+            </button>
+        </div>
+    </div>
+</form>
+<script>
+
+
+    var CERT_CLOB="";
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'upload','form'], function(){
+        var $ = layui.$
+                ,form = layui.form,upload=layui.upload;
+
+        uploadRender2(upload, '#upload_img', '#goods_img',(data)=>{
+            CERT_CLOB=data;
+        });//渲染上传图片
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var params=data.field;
+
+        });
+    });
+
+    function save() {
+        var params={};
+        params["bIZ_TYPE_CODE"]=$("#BIZ_TYPE_CODE").val();
+        params["aTTACHED_SEQ_NO"]=$("#ATTACHED_SEQ_NO").val();
+        params["cERT_TYPE_CODE"]=$("#CERT_TYPE_CODE").val();
+        params["cERT_CLOB"]=CERT_CLOB;
+        params["fILE_NAME"]=$("#FILE_NAME").val();
+        params["fILE_TYPE"]=$("#FILE_TYPE").val();
+        params["sTORE_DATE"]=$("#STORE_DATE").val();
+
+        return params;
+    }
+
+</script>
+</body>
+</html>

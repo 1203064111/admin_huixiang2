@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
+
+    <script src="../../layuiadmin/layui/layui.js"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../common.js"></script>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品类型</label>
+                    <div class="layui-input-inline">
+                        <select name="challenge_resource" id="challenge_resource">
+                            <option value=""></option>
+                            <option value="member">用户挑战</option>
+                            <option value="platform">平台视频</option>
+                            <!--<option value="shop">商户视频</option>-->
+                        </select>
+                    </div>
+
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-contlist-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-list" data-type="batchdel">删除</button>
+                <!--<button class="layui-btn layuiadmin-btn-list" data-type="add">添加</button>-->
+            </div>
+
+            <table id="LAY-app-content-list" lay-filter="LAY-app-content-list"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view"><i class="layui-icon layui-icon-edit"></i>查看</a>
+</script>
+
+<script>
+    layui.config({
+        base: '../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+                ,form = layui.form;
+
+        form.on('submit(LAY-app-contlist-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('LAY-app-content-list', {
+                where: field
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        });
+        var challengeBeans = [];
+        tableRender(table,'#LAY-app-content-list',home_url+'/challengeController/v1.0/getMemberChallenges',{},
+                [[
+                    {type:'checkbox'},
+                    {field:'challenge_id', width: 100,title: 'ID'}
+                    // ,{field:'challenge_desc', title: '描述'}
+                    ,{field:'product_name', title: '产品名称'}
+                    ,{field:'class_name', title: '视频分类'}
+
+                    ,{field:'challenge_resource_show', title: '视频来源'}
+
+                    ,{field:'state',  title: '上架状态',templet:function (d) {
+                            if(d.state=="1"){
+                                return '<input type="checkbox" id="state" name="state" lay-filter="state" lay-skin="switch" ' +
+                                    'lay-text="ON|OFF" value="1" checked>';
+                            }else{
+                                return '<input type="checkbox" id="state" name="state" lay-filter="state" lay-skin="switch" ' +
+                                    'lay-text="ON|OFF" value="1">';
+                            }
+                        }}
+
+                    ,{field: 'right', title: '操作', width: 100, toolbar:"#barDemo"}
+                ]],function (data) {
+                challengeBeans= data
+                })
+
+        table.on('tool(LAY-app-content-list)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'view'){
+                layer.open({
+                    type: 2
+                    ,title: '查看视频'
+                    ,content:'member_challenge_editor.html?challenge_id='+data.challenge_id
+                    ,area: ['90%','90%']
+                });
+            }
+        });
+        form.on('switch(state)', function(data){
+            var index=data.othis.parents("tr").attr("data-index");
+            post(home_url+"/challengeController/v1.0/updateMemberChallenge",
+                {challenge_id:challengeBeans[index].challenge_id,
+                    state:data.elem.checked?"1":"0"},function () {
+                    table.reload("LAY-app-content-list",{});
+                },function () {
+                    table.reload("LAY-app-content-list",{})
+                })
+        });
+        form.on('switch(is_front)', function(data){
+            var index=data.othis.parents("tr").attr("data-index");
+            post(home_url+"/challengeController/v1.0/updateMemberChallenge",
+                {challenge_id:challengeBeans[index].challenge_id,
+                    is_front:data.elem.checked?"1":"0"},function () {
+                    table.reload("LAY-app-content-list",{});
+                },function () {
+                    table.reload("LAY-app-content-list",{})
+                })
+        });
+
+        var $ = layui.$, active = {
+            batchdel: function(){
+                var checkStatus = table.checkStatus('LAY-app-content-list')
+                        ,checkData = checkStatus.data; //得到选中的数据
+
+                if(checkData.length === 0){
+                    return layer.msg('请选择数据');
+                }
+
+                layer.confirm('确定删除吗？', function(index) {
+                    var challenge_ids=[];
+                    for(var i=0;i<checkData.length;i++){
+                        challenge_ids.push(checkData[i].challenge_id)
+                    }
+                    post(home_url+'/challengeController/v1.0/deleteMemberChallenge',{challenge_ids:challenge_ids.toString()},function () {
+                        table.reload("LAY-app-content-list");
+                        layer.close(index)
+                    })
+                });
+            },
+            // add: function(){
+            //     layer.open({
+            //         type: 2
+            //         ,title: '添加挑战活动'
+            //         ,content:'activity_editor.html?challenge_id=-1'
+            //         ,area: ['90%','90%']
+            //     });
+            // }
+        };
+
+        $('.layui-btn.layuiadmin-btn-list').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+
+
+</script>
+</body>
+</html>
